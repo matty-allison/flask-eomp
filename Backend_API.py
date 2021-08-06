@@ -253,6 +253,20 @@ def delete_product(product_id):
         confirmation["status_code"] = 200
     return confirmation
 
+#route to view a single product
+@app.route('/show-product/<int:product_id>/', methods=["GET"])
+def show_product(product_id):
+    confirmation = {}
+
+    with sqlite3.connect('sales.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM products WHERE product_id=' + str(product_id))
+
+        products = cursor.fetchall()
+
+    confirmation["status_code"] = 200
+    confirmation["data"] = products
+    return confirmation
 
 if __name__ == '__main__':
     app.run(debug=True)
