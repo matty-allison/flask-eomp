@@ -99,29 +99,34 @@ def protected():
 @app.route('/register/', methods=["POST"])
 def register():
     confirmation = {}
+    try:
 
-    if request.method == "POST":
+        if request.method == "POST":
 
-        name = request.form['name']
-        surname = request.form['surname']
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+            name = request.form['name']
+            surname = request.form['surname']
+            username = request.form['username']
+            email = request.form['email']
+            password = request.form['password']
 
-        with sqlite3.connect("sales.db") as conn:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO accounts("
-                           "name,"
-                           "surname,"
-                           "username,"
-                           "email,"
-                           "password) VALUES(?, ?, ?, ?, ?)", (name, surname, username, email, password))
-            conn.commit()
-            confirmation["message"] = "User registered successfully"
-            confirmation["status_code"] = 200
-            msg = Message('Hello', sender='matthewatwork18@gmail.com', recipients=[email])
-            msg.body = "Hello and welcome new user, you have now registered to Point of sale."
-            mail.send(msg)
+            with sqlite3.connect("sales.db") as conn:
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO accounts("
+                               "name,"
+                               "surname,"
+                               "username,"
+                               "email,"
+                               "password) VALUES(?, ?, ?, ?, ?)", (name, surname, username, email, password))
+                conn.commit()
+                confirmation["message"] = "User registered successfully"
+                confirmation["status_code"] = 200
+                msg = Message('Hello', sender='matthewatwork18@gmail.com', recipients=[email])
+                msg.body = "Hello and welcome new user, you have now registered to Point of sale."
+                mail.send(msg)
+    except ValueError:
+        if request.method != "POST":
+            return
+    finally:
         return confirmation
 
 
