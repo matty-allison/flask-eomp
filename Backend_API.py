@@ -36,7 +36,7 @@ def addProduct():
                      "product_name TEXT NOT NULL,"
                      "product_description TEXT NOT NULL,"
                      "product_price TEXT NOT NULL)")
-    print("product table created")
+    print("products table created")
 
 
 # Calling the functions to create the table
@@ -119,9 +119,9 @@ def register():
             conn.commit()
             confirmation["message"] = "User registered successfully"
             confirmation["status_code"] = 200
-        msg = Message('Hello', sender='matthewatwork18@gmail.com', recipients=["mattymallison@gmail.com"])
-        msg.body = "Hello and welcome new user, you have now registered to Point of sale."
-        mail.send(msg)
+            msg = Message('Hello', sender='matthewatwork18@gmail.com', recipients=[email])
+            msg.body = "Hello and welcome new user, you have now registered to Point of sale."
+            mail.send(msg)
         return confirmation
 
 
@@ -180,7 +180,7 @@ def show_Products():
 
 
 # route to view one product (product id required)
-@app.route('/view-product/<int:product_id>', methods=["GET"])
+@app.route('/view-product/<int:product_id>/', methods=["GET"])
 @jwt_required()
 def view_product(product_id):
     confirmation = {}
@@ -204,11 +204,13 @@ def edit_product(product_id):
 
     if request.method == "PUT":
         with sqlite3.connect('sales.db') as conn:
-            new_data = dict(request.json)
+            product_name = request.form['product_name']
+            product_description = request.form['product_description']
+            product_price = request.form['product_price']
             put_data = {}
 
-            if new_data.get("product_name") is not None:
-                put_data["product_name"] = new_data.get("product_name")
+            if product_name is not None:
+                put_data["product_name"] = product_name
                 cursor = conn.cursor()
                 cursor.execute("UPDATE products SET product_name=? WHERE product_id=?", (put_data["product_name"], product_id))
                 conn.commit()
@@ -216,8 +218,8 @@ def edit_product(product_id):
                 confirmation["message"] = "Product name changed successfully"
                 confirmation["status_code"] = 200
 
-            if new_data.get("product_description") is not None:
-                put_data["product_description"] = new_data.get("product_description")
+            if product_description is not None:
+                put_data["product_description"] = product_description
                 cursor = conn.cursor()
                 cursor.execute("UPDATE products SET product_description=? WHERE product_id=?", (put_data["product_description"], product_id))
                 conn.commit()
@@ -225,8 +227,8 @@ def edit_product(product_id):
                 confirmation["message"] = "Product description changed successfully"
                 confirmation["status_code"] = 200
 
-            if new_data.get("product_price") is not None:
-                put_data["product_price"] = new_data.get("product_price")
+            if product_price is not None:
+                put_data["product_price"] = product_price
                 cursor = conn.cursor()
                 cursor.execute("UPDATE products SET product_price=? WHERE product_id=?", (put_data["product_price"], product_id))
                 conn.commit()
